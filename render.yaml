@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: lecturenote-local-action-server
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_PATH
+        value: /var/data/lecture_actions.sqlite3
+      - key: ACTION_API_KEY
+        sync: false
+    disk:
+      name: lecturenote-data
+      mountPath: /var/data
+      sizeGB: 1

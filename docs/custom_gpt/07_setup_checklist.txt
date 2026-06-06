@@ -1,0 +1,33 @@
+# Custom GPT 설정 체크리스트
+
+## 기본 정보
+Name:
+강의자료 자동 정리본 생성기
+
+Description:
+강의자료, 전사본, 교재, 과거 시험 출제 양식을 바탕으로 긴 정리본을 자동 분할·연속 작성합니다. 원본 파일은 ChatGPT에만 업로드하고, Action 서버에는 진행 상태와 생성 결과만 로컬 SQLite로 저장합니다.
+
+## Instructions
+`docs/custom_gpt/02_instructions.txt` 전체 붙여넣기
+
+## Knowledge
+아래 파일 업로드:
+- docs/custom_gpt/03_knowledge_format_rules.txt
+- docs/custom_gpt/04_knowledge_detail_rules.txt
+
+## Actions
+`docs/actions/openapi.yaml` 붙여넣기
+
+주의:
+servers.url을 Render 배포 주소로 변경
+
+## Authentication
+API Key
+Bearer 방식
+값은 Render 환경변수 ACTION_API_KEY와 동일하게 설정
+
+## Capabilities
+Web Search: OFF
+Image Generation: OFF
+Code Interpreter / Data Analysis: ON
+Canvas: ON 가능하면 ON

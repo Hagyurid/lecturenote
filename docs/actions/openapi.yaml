@@ -1,0 +1,383 @@
+openapi: 3.1.0
+info:
+  title: LectureNote Local Action Server
+  version: 1.0.0
+servers:
+  - url: https://YOUR-RENDER-SERVICE.onrender.com
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - bearerAuth: []
+
+paths:
+  /health:
+    get:
+      operationId: health
+      summary: Check server health
+      responses:
+        "200":
+          description: Server health
+
+  /projects:
+    post:
+      operationId: createProject
+      summary: Create a lecture-note project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title:
+                  type: string
+                source_files:
+                  type: object
+                  additionalProperties: true
+                workflow_rules:
+                  type: object
+                  additionalProperties: true
+      responses:
+        "200":
+          description: Project created
+
+  /projects/{project_id}/outline:
+    post:
+      operationId: saveOutline
+      summary: Save outline sections
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sections]
+              properties:
+                sections:
+                  type: array
+                  items:
+                    type: object
+                    required: [index, title]
+                    properties:
+                      index:
+                        type: integer
+                      title:
+                        type: string
+                      slide_range:
+                        type: string
+                      transcript_range:
+                        type: string
+                      textbook_range:
+                        type: string
+                      exam_format_range:
+                        type: string
+                      status:
+                        type: string
+      responses:
+        "200":
+          description: Outline saved
+
+  /projects/{project_id}/next:
+    get:
+      operationId: getNextSection
+      summary: Get next pending section
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Next section
+
+  /projects/{project_id}/sections:
+    post:
+      operationId: saveSection
+      summary: Save completed section markdown
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [section_index, content_markdown]
+              properties:
+                section_index:
+                  type: integer
+                title:
+                  type: string
+                content_markdown:
+                  type: string
+                study_direction:
+                  type: string
+                quality_report:
+                  type: object
+                  additionalProperties: true
+      responses:
+        "200":
+          description: Section saved
+
+  /projects/{project_id}/image-items:
+    post:
+      operationId: saveImageItems
+      summary: Save image insertion items
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [image_items]
+              properties:
+                image_items:
+                  type: array
+                  items:
+                    type: object
+                    required: [image_id]
+                    properties:
+                      image_id:
+                        type: string
+                      source_page:
+                        type: string
+                      source_slide:
+                        type: string
+                      insert_position:
+                        type: string
+                      method:
+                        type: string
+                        default: original_slide_full_no_crop
+                      crop_allowed:
+                        type: boolean
+                        default: false
+                      purpose:
+                        type: string
+                      note:
+                        type: string
+                      needs_review:
+                        type: boolean
+                        default: false
+      responses:
+        "200":
+          description: Image items saved
+
+  /projects/{project_id}/textbook-items:
+    post:
+      operationId: saveTextbookItems
+      summary: Save textbook support items
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [textbook_items]
+              properties:
+                textbook_items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      item_type:
+                        type: string
+                      uncertain_part:
+                        type: string
+                      textbook_evidence:
+                        type: string
+                      reflected_content:
+                        type: string
+                      source:
+                        type: string
+                      status:
+                        type: string
+      responses:
+        "200":
+          description: Textbook items saved
+
+  /projects/{project_id}/exam-items:
+    post:
+      operationId: saveExamItems
+      summary: Save exam-format based items
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [exam_items]
+              properties:
+                exam_items:
+                  type: array
+                  items:
+                    type: object
+                    required: [content]
+                    properties:
+                      item_type:
+                        type: string
+                      content:
+                        type: string
+                      source:
+                        type: string
+                      confidence:
+                        type: string
+                      note:
+                        type: string
+      responses:
+        "200":
+          description: Exam items saved
+
+  /projects/{project_id}/check-items:
+    post:
+      operationId: saveCheckItems
+      summary: Save check items
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [check_items]
+              properties:
+                check_items:
+                  type: array
+                  items:
+                    type: object
+                    required: [item_type, content]
+                    properties:
+                      item_type:
+                        type: string
+                      content:
+                        type: string
+                      source:
+                        type: string
+                      status:
+                        type: string
+      responses:
+        "200":
+          description: Check items saved
+
+  /projects/{project_id}/formula-items:
+    post:
+      operationId: saveFormulaItems
+      summary: Save formula review items
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [formula_items]
+              properties:
+                formula_items:
+                  type: array
+                  items:
+                    type: object
+                    required: [location]
+                    properties:
+                      location:
+                        type: string
+                      formula_type:
+                        type: string
+                      check_content:
+                        type: string
+                      status:
+                        type: string
+      responses:
+        "200":
+          description: Formula items saved
+
+  /projects/{project_id}/design-items:
+    post:
+      operationId: saveDesignItems
+      summary: Save design review items
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [design_items]
+              properties:
+                design_items:
+                  type: array
+                  items:
+                    type: object
+                    required: [rule_type, check_content]
+                    properties:
+                      rule_type:
+                        type: string
+                      check_content:
+                        type: string
+                      status:
+                        type: string
+      responses:
+        "200":
+          description: Design items saved
+
+  /projects/{project_id}/final-bundle:
+    get:
+      operationId: getFinalBundle
+      summary: Get all saved content for final merge
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Final bundle
